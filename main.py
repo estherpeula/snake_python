@@ -3,6 +3,8 @@ import turtle
 import time
 import random
 
+segments = []
+
 def up():
     if new_segment.heading() != 270:
         new_segment.setheading(90)
@@ -30,12 +32,15 @@ new_segment.shape("square")
 new_segment.color("white")
 new_segment.penup()
 new_segment.goto(0,0)
+segments.append(new_segment)
 
-#Comida
+#Comida // 
 food = turtle.Turtle("circle")
 food.color("red")
 food.penup()
-
+x = random.randint(-280, 280)
+y = random.randint(-280, 280)
+food.goto(x, y) #Posiciona la comida en una posición aleatoria
 
 screen.onkey(up, "Up")
 screen.onkey(down, "Down")
@@ -46,14 +51,25 @@ screen.listen()
 
 while True:
     screen.update() #Actualiza la animación
-    new_segment.forward(20)
-    time.sleep(0.4)
+    time.sleep(0.3)
 
-# Detectar toque de la serpiente con la comida
+# Detectar toque comida
     if new_segment.distance(food) < 15:
         x = random.randint(-280, 280)
         y = random.randint(-280, 280)
         food.goto(x, y) #Mueve la comida a una posición aleatoria
 
+        next_segment = turtle.Turtle("square")
+        next_segment.color("white")
+        next_segment.penup()
+        segments.append(next_segment)
+
+    # Hacer que los segmentos sigan al primero
+    if len(segments) > 1:
+        for i in range(len(segments) - 1, 0, -1):
+            segments[i].goto(segments[i - 1].xcor(), segments[i - 1].ycor()) #Mueve el segmento a la posición del anterior
+
+
+    new_segment.forward(20)
 
 screen.exitonclick()
