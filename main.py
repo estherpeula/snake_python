@@ -42,6 +42,17 @@ x = random.randint(-280, 280)
 y = random.randint(-280, 280)
 food.goto(x, y) #Posiciona la comida en una posición aleatoria
 
+
+# Score // 
+score = turtle.Turtle()
+score.color("white")
+score.penup()
+score.goto(0, 265)
+score.hideturtle()
+score_board = 0
+score.write(f"Score: {score_board}", align="center", font=("Arial", 24, "bold"))
+
+
 screen.onkey(up, "Up")
 screen.onkey(down, "Down")
 screen.onkey(left, "Left")
@@ -49,7 +60,8 @@ screen.onkey(right, "Right")
 
 screen.listen()
 
-while True:
+game_is_on = True
+while game_is_on:
     screen.update() #Actualiza la animación
     time.sleep(0.3)
 
@@ -64,12 +76,32 @@ while True:
         next_segment.penup()
         segments.append(next_segment)
 
+        #Actualizar puntuación
+        score.clear()
+        score_board += 1
+        score.write(f"Score: {score_board}", align="center", font=("Arial", 24, "bold"))
+
+
     # Hacer que los segmentos sigan al primero
     if len(segments) > 1:
         for i in range(len(segments) - 1, 0, -1):
             segments[i].goto(segments[i - 1].xcor(), segments[i - 1].ycor()) #Mueve el segmento a la posición del anterior
-
-
     new_segment.forward(20)
+
+    # Detectar colisión con la pared
+    head = segments[0]
+    if head.xcor() > 300 or head.xcor() < -300 or head.ycor() > 300 or head.ycor() < -300:
+        game_is_on = False
+        score.goto(0, 0)
+        score.write("GAME OVER", align="center", font=("Arial", 24, "bold"))
+
+    # Detectar colisión con la cola
+    for segment in segments[1:]:
+        if segment == head:
+            pass
+        elif head.distance(segment) < 10:
+            game_is_on = False
+            score.goto(0, 0)
+            score.write("GAME OVER", align="center", font=("Arial", 24, "bold"))
 
 screen.exitonclick()
